@@ -50,13 +50,7 @@ class Stack:
             self.push_back(StackObj(i))
         return self
 
-st = Stack()
-st.push_back(StackObj('1'))
-st.push_back(StackObj('2'))
-st += 5
-st *= [3,7,8]
-# st.push_back(StackObj('3'))
-print(st.top.next.next.next.next.next.data)
+
 
 
 
