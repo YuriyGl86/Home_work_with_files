@@ -1,53 +1,62 @@
-class ValidateString:
+class StackObj:
 
-    def __init__(self, min_length=3, max_length=100):
-        self.min_length = min_length
-        self.max_length = max_length
+    def __init__(self, data, next=None):
+        self.__data = data
+        self.__next = next
 
-    def validate(self, string):
-        if type(string) == str and self.min_length <= len(string) <= self.max_length:
-            return True
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, new):
+        self.__data = new
+
+    @property
+    def next(self):
+        return self.__next
+
+    @next.setter
+    def next(self, new):
+        self.__next = new
+
+
+class Stack:
+
+    def __init__(self):
+        self.top = None
+
+    def push_back(self, obj):
+        if self.top is None:
+            self.top = obj
         else:
-            return False
+            temp = self.top
+            while temp.next:
+                temp = temp.next
+            temp.next = obj
 
+    def pop_back(self):
+        temp = self.top
+        while temp.next.next:
+            temp = temp.next
+        temp.next = None
 
-class StringValue:
+    def __add__(self, other):
+        self.push_back(StackObj(other))
+        return self
 
-    def __init__(self, validator):
-        self.validator = validator
+    def __mul__(self, other):
+        for i in other:
+            self.push_back(StackObj(i))
+        return self
 
-    def __set_name__(self, owner, name):
-        self.name = '_' + name
-
-    def __set__(self, instance, value):
-        if self.validator.validate:
-            instance.__dict__[self.name] = value
-
-    def __get__(self, instance, owner):
-        return instance.__dict__[self.name]
-
-
-class RegisterForm:
-    login = StringValue(ValidateString())
-    password = StringValue(ValidateString())
-    email = StringValue(ValidateString())
-
-    def __init__(self, login, password, email):
-        self.login = login
-        self.password = password
-        self.email = email
-
-    def get_fields(self):
-        return [self.login, self.password, self.email]
-
-    def show():
-        print(f'<form>\nЛогин: {self.login}\nПароль: {self.password}\nEmail: {self.email}\n</form>')
-
-
-
-
-
-
+st = Stack()
+st.push_back(StackObj('1'))
+st.push_back(StackObj('2'))
+st += 5
+st *= [3,7,8]
+# st.push_back(StackObj('3'))
+print(st.top.next.next.next.next.next.data)
 
 
 
