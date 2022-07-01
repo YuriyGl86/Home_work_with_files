@@ -11,3 +11,12 @@ class Track:
     def __init__(self, start_x, start_y):
         self.start_x = start_x
         self.start_y = start_y
+        self.lst = []
+
+    def add_track(self, tr):
+        self.lst.append(tr)
+
+    def get_tracks(self):
+        return tuple(self.lst)
+
+    def __len__(self):
