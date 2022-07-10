@@ -1,22 +1,30 @@
-class TrackLine:
+# здесь объявляйте функцию-декоратор
+def integer_params_decorated(func):
+    def wrapper(*args, **kwargs):
+        if not all([type(i) == int for i in args[1:]]):
+            raise TypeError("аргументы должны быть целыми числами")
+        else:
+            return func(*args, **kwargs)
+    return wrapper    
 
-    def __init__(self, to_x, to_y, max_speed):
-        self.to_x = to_x
-        self.to_y = to_y
-        self.max_speed = max_speed
 
 
-class Track:
 
-    def __init__(self, start_x, start_y):
-        self.start_x = start_x
-        self.start_y = start_y
-        self.lst = []
+def integer_params(cls):
+    methods = {k: v for k, v in cls.__dict__.items() if callable(v)}
+    for k, v in methods.items():
+        setattr(cls, k, integer_params_decorated(v))
 
-    def add_track(self, tr):
-        self.lst.append(tr)
+    return cls
 
-    def get_tracks(self):
-        return tuple(self.lst)
 
-    def __len__(self):
+@integer_params
+class Vector:
+    def __init__(self, *args):
+        self.__coords = list(args)
+
+    def __getitem__(self, item):
+        return self.__coords[item]
+
+    def __setitem__(self, key, value):
+        self.__coords[key] = value
