@@ -1,30 +1,53 @@
-# здесь объявляйте функцию-декоратор
-def integer_params_decorated(func):
-    def wrapper(*args, **kwargs):
-        if not all([type(i) == int for i in args[1:]]):
-            raise TypeError("аргументы должны быть целыми числами")
-        else:
-            return func(*args, **kwargs)
-    return wrapper    
+import pprint
+#  Task 1
+def get_recepts_from_file(name):
+    with open(name, 'r', encoding='utf-8') as file:
+        lst = file.readlines()
+
+    lst1 = [i.strip() for i in lst]
+    recepts_number = lst1.count('')
+    res = []
+    for i in range(recepts_number):
+        indx = lst1.index('')
+        res.append(lst1[:indx])
+        del lst1[:indx+1]
+    res.append(lst1)
+    return res
 
 
+def get_dict_for_ingredients(strk):
+    ingredient_name, quantity, measure = strk.split(' | ')
+    quantity = int(quantity)
+    return {'ingredient_name': ingredient_name, 'quantity': quantity, 'measure': measure}
 
 
-def integer_params(cls):
-    methods = {k: v for k, v in cls.__dict__.items() if callable(v)}
-    for k, v in methods.items():
-        setattr(cls, k, integer_params_decorated(v))
+def get_cook_book():
+    name = input('Ввудите имя файла или путь к файлу: ')
+    dish_list = get_recepts_from_file(name)
+    cooking_book = {}
+    for dish in dish_list:
+        cooking_book[dish[0]] = [get_dict_for_ingredients(ingredient) for ingredient in dish[2:]]
+    return cooking_book
 
-    return cls
+cook_book = get_cook_book()
+pprint.pprint(cook_book, width=120, sort_dicts=False)
 
+print()
+print('*-*' * 30, '\n')
+#############################################################################################
 
-@integer_params
-class Vector:
-    def __init__(self, *args):
-        self.__coords = list(args)
+#Task 2
+def get_shop_list_by_dishes(dishes: list, person_count: int):
+    ingredient_needed = {}
+    for dish in dishes:
+        if dish in cook_book:
 
-    def __getitem__(self, item):
-        return self.__coords[item]
+            for ingr in cook_book[dish]:
+                if ingr['ingredient_name'] not in ingredient_needed:
+                    ingredient_needed[ingr['ingredient_name']] = {"quantity": ingr['quantity'] * person_count, 'measure': ingr['measure']}
+                else:
+                    ingredient_needed[ingr['ingredient_name']]['quantity'] += ingr['quantity'] * person_count
 
-    def __setitem__(self, key, value):
-        self.__coords[key] = value
+    return ingredient_needed
+
+pprint.pprint(get_shop_list_by_dishes(['Запеченный картофель', 'Омлет'], 2),  width=80, sort_dicts=False)
