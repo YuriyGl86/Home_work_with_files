@@ -1,7 +1,6 @@
 import pprint
 import os
 
-
 #  Task 1
 
 def get_dict_for_ingredients(strk):
